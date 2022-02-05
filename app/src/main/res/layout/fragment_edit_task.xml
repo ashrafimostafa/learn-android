@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edit_task_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="task name" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/edit_task_important"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Important" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/edit_task_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tool:text="create at: 1 July 2022" />
+
+    </LinearLayout>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/edit_task_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_check" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
