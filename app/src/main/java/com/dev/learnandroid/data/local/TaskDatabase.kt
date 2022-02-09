@@ -25,13 +25,13 @@ abstract class TaskDatabase : RoomDatabase() {
             //dummy data
             val dao = database.get().taskDao()
             applicationScope.launch {
-                dao.insertTask(Task("Ali"))
-                dao.insertTask(Task("Hasan"))
-                dao.insertTask(Task("Javid"))
-                dao.insertTask(Task("Jamilieh"))
-                dao.insertTask(Task("Asghar"))
-                dao.insertTask(Task("Ebrahim"))
-                dao.insertTask(Task("Mostafa"))
+                dao.insertTask(Task("Ali", isChecked = false))
+                dao.insertTask(Task("Hasan", isChecked = false))
+                dao.insertTask(Task("Javid", isChecked = true, isImportant = true))
+                dao.insertTask(Task("Jamilieh", isChecked = false, isImportant = true))
+                dao.insertTask(Task("Asghar", isChecked = true))
+                dao.insertTask(Task("Ebrahim", isChecked = false, isImportant = true))
+                dao.insertTask(Task("Mostafa", isChecked = false))
             }
         }
     }

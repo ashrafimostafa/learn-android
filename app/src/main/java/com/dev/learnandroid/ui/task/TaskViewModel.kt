@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.dev.learnandroid.data.local.TaskDao
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 
 class TaskViewModel @ViewModelInject constructor(
@@ -13,10 +14,25 @@ class TaskViewModel @ViewModelInject constructor(
 
     val searchQuery = MutableStateFlow("")
 
-    private val taskFlow = searchQuery.flatMapLatest {
-        taskDao.getAllTask(it)
+    val sortOrder = MutableStateFlow(SortOrder.BY_DATE)
+
+    val hideCompleted = MutableStateFlow(false)
+
+    private val taskFlow = combine(
+        searchQuery,
+        sortOrder,
+        hideCompleted
+    ) { query, sortOrder, hideApp ->
+        Triple(query, sortOrder, hideApp)
+    }.flatMapLatest { (query, sortOrder, hideApp) ->
+        taskDao.getTask(query, sortOrder, hideApp)
     }
 
     val taskList = taskFlow.asLiveData()
 
+}
+
+enum class SortOrder {
+    BY_NAME,
+    BY_DATE
 }
