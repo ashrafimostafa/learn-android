@@ -74,6 +74,10 @@ class TaskViewModel @ViewModelInject constructor(
             taskEventChanel.send(TaskEvent.ShowEditTaskOperationMessage)
     }
 
+    fun onDeleteAllCheckTaskClick() = viewModelScope.launch {
+        taskEventChanel.send(TaskEvent.NavigateToDeleteAllCheckedTask)
+    }
+
 
     sealed class TaskEvent {
         object NavigateToAddTaskFragment : TaskEvent()
@@ -81,6 +85,7 @@ class TaskViewModel @ViewModelInject constructor(
         data class ShouldUndoDeleteTaskMessage(val task: Task) : TaskEvent()
         object ShowAddTaskOperationMessage : TaskEvent()
         object ShowEditTaskOperationMessage : TaskEvent()
+        object NavigateToDeleteAllCheckedTask : TaskEvent()
     }
 }
 

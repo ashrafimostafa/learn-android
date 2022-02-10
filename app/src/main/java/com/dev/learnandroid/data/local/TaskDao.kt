@@ -26,4 +26,8 @@ interface TaskDao {
 
     @Delete
     suspend fun deleteTask(task: Task)
+
+    @Query("DELETE FROM tasktable WHERE isChecked = 1")
+    suspend fun deleteCheckedTask()
+
 }

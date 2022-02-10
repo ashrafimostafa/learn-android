@@ -105,6 +105,11 @@ class TaskFragment : Fragment(R.layout.fragment_task), TaskAdapter.OnItemClickLi
                         "Task edited",
                         Snackbar.LENGTH_LONG
                     ).show()
+                    TaskViewModel.TaskEvent.NavigateToDeleteAllCheckedTask -> {
+                        val action =
+                            TaskFragmentDirections.actionGlobalDeleteCheckedTaskDialogFragment()
+                        findNavController().navigate(action)
+                    }
                 }
             }
         }
@@ -153,6 +158,7 @@ class TaskFragment : Fragment(R.layout.fragment_task), TaskAdapter.OnItemClickLi
                 true
             }
             R.id.menu_task_delete_all_completed_task -> {
+                viewModel.onDeleteAllCheckTaskClick()
                 true
             }
             else -> super.onOptionsItemSelected(item)
