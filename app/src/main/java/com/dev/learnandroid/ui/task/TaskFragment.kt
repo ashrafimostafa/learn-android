@@ -5,15 +5,18 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dev.learnandroid.R
+import com.dev.learnandroid.data.local.SortOrder
 import com.dev.learnandroid.databinding.FragmentTaskBinding
 import com.dev.learnandroid.util.onQueryTextChange
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TaskFragment : Fragment(R.layout.fragment_task) {
@@ -53,21 +56,26 @@ class TaskFragment : Fragment(R.layout.fragment_task) {
         searchView.onQueryTextChange { query ->
             viewModel.searchQuery.value = query
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            menu.findItem(R.id.menu_task_hide_complete_task).isChecked =
+                viewModel.preferenceFlow.first().hideCompleted
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_task_sort_name -> {
-                viewModel.sortOrder.value = SortOrder.BY_NAME
+                viewModel.onSortOrderSelected(SortOrder.BY_NAME)
                 true
             }
             R.id.menu_task_sort_date -> {
-                viewModel.sortOrder.value = SortOrder.BY_DATE
+                viewModel.onSortOrderSelected(SortOrder.BY_DATE)
                 true
             }
             R.id.menu_task_hide_complete_task -> {
                 item.isChecked = !item.isChecked
-                viewModel.hideCompleted.value = item.isChecked
+                viewModel.onHideCompleteSelected(item.isChecked)
                 true
             }
             R.id.menu_task_delete_all_completed_task -> {
