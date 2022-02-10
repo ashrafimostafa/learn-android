@@ -8,15 +8,21 @@ import com.dev.learnandroid.data.local.PreferencesManager
 import com.dev.learnandroid.data.local.SortOrder
 import com.dev.learnandroid.data.local.Task
 import com.dev.learnandroid.data.local.TaskDao
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class TaskViewModel @ViewModelInject constructor(
     private val taskDao: TaskDao,
     private val preferencesManager: PreferencesManager
 ) : ViewModel() {
+
+    private val taskEventChanel = Channel<TaskEvent>()
+
+    val taskEvent = taskEventChanel.receiveAsFlow()
 
     val searchQuery = MutableStateFlow("")
 
@@ -46,6 +52,18 @@ class TaskViewModel @ViewModelInject constructor(
     fun onTaskCheckedChange(task: Task, checked: Boolean) =
         viewModelScope.launch { taskDao.updateTask(task.copy(isChecked = checked)) }
 
+    fun onTaskSwiped(task: Task) = viewModelScope.launch {
+        taskDao.deleteTask(task)
+        taskEventChanel.send(TaskEvent.ShouldUndoDeleteTaskMessage(task))
+    }
 
+    fun onUndoDeleteClick(task: Task) = viewModelScope.launch {
+        taskDao.insertTask(task)
+    }
+
+
+    sealed class TaskEvent {
+        data class ShouldUndoDeleteTaskMessage(val task: Task) : TaskEvent()
+    }
 }
 
