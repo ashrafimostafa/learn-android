@@ -1,9 +1,8 @@
 package com.dev.learnandroid.ui.task
 
+import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.dev.learnandroid.data.local.PreferencesManager
 import com.dev.learnandroid.data.local.SortOrder
 import com.dev.learnandroid.data.local.Task
@@ -17,19 +16,21 @@ import kotlinx.coroutines.launch
 
 class TaskViewModel @ViewModelInject constructor(
     private val taskDao: TaskDao,
-    private val preferencesManager: PreferencesManager
+    private val preferencesManager: PreferencesManager,
+    @Assisted private val state: SavedStateHandle
 ) : ViewModel() {
+
 
     private val taskEventChanel = Channel<TaskEvent>()
 
     val taskEvent = taskEventChanel.receiveAsFlow()
 
-    val searchQuery = MutableStateFlow("")
+    val searchQuery = state.getLiveData("searchQuery", "")
 
     val preferenceFlow = preferencesManager.preferencesFlow
 
     private val taskFlow = combine(
-        searchQuery,
+        searchQuery.asFlow(),
         preferenceFlow
     ) { query, filterPreferences ->
         Pair(query, filterPreferences)
@@ -45,8 +46,8 @@ class TaskViewModel @ViewModelInject constructor(
     fun onHideCompleteSelected(hideCompleted: Boolean) =
         viewModelScope.launch { preferencesManager.updateHideCompleted(hideCompleted) }
 
-    fun onTaskSelected(task: Task) {
-
+    fun onTaskSelected(task: Task) = viewModelScope.launch {
+        taskEventChanel.send(TaskEvent.NavigateToEditTaskFragment(task))
     }
 
     fun onTaskCheckedChange(task: Task, checked: Boolean) =
@@ -61,8 +62,14 @@ class TaskViewModel @ViewModelInject constructor(
         taskDao.insertTask(task)
     }
 
+    fun addOnAddTaskClick() = viewModelScope.launch {
+        taskEventChanel.send(TaskEvent.NavigateToAddTaskFragment)
+    }
+
 
     sealed class TaskEvent {
+        object NavigateToAddTaskFragment : TaskEvent()
+        data class NavigateToEditTaskFragment(val task: Task) : TaskEvent()
         data class ShouldUndoDeleteTaskMessage(val task: Task) : TaskEvent()
     }
 }

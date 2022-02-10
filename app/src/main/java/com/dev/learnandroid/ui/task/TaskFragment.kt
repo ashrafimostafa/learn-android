@@ -8,6 +8,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -57,6 +58,9 @@ class TaskFragment : Fragment(R.layout.fragment_task), TaskAdapter.OnItemClickLi
                     viewModel.onTaskSwiped(task)
                 }
             }).attachToRecyclerView(taskList)
+
+            taskFab.setOnClickListener { viewModel.addOnAddTaskClick() }
+
         }
 
         viewModel.taskList.observe(viewLifecycleOwner) { tasks ->
@@ -71,6 +75,19 @@ class TaskFragment : Fragment(R.layout.fragment_task), TaskAdapter.OnItemClickLi
                             .setAction("UNDO") {
                                 viewModel.onUndoDeleteClick(event.task)
                             }.show()
+                    }
+                    is TaskViewModel.TaskEvent.NavigateToAddTaskFragment -> {
+                        val action =
+                            TaskFragmentDirections.actionTaskFragmentToAddEditTaskFragment(title = "New Task")
+                        findNavController().navigate(action)
+                    }
+                    is TaskViewModel.TaskEvent.NavigateToEditTaskFragment -> {
+                        val action =
+                            TaskFragmentDirections.actionTaskFragmentToAddEditTaskFragment(
+                                event.task,
+                                title = "Edit Task"
+                            )
+                        findNavController().navigate(action)
                     }
                 }
             }

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tool="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp">
+    android:padding="8dp"
+    tools:context=".ui.addedittask.AddEditTaskFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,9 +25,9 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/edit_task_date"
+            tools:text="create at: 1 July 2022"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tool:text="create at: 1 July 2022" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
