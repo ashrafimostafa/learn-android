@@ -29,3 +29,6 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 }
+
+val TASK_UPDATED = 1
+val TASK_ADDED = 2

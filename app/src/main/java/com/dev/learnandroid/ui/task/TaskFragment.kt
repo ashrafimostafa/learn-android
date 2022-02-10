@@ -6,6 +6,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -16,6 +17,7 @@ import com.dev.learnandroid.R
 import com.dev.learnandroid.data.local.SortOrder
 import com.dev.learnandroid.data.local.Task
 import com.dev.learnandroid.databinding.FragmentTaskBinding
+import com.dev.learnandroid.ui.TASK_ADDED
 import com.dev.learnandroid.util.onQueryTextChange
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -63,6 +65,10 @@ class TaskFragment : Fragment(R.layout.fragment_task), TaskAdapter.OnItemClickLi
 
         }
 
+        setFragmentResultListener("add_edit_task") { _, bundle ->
+            viewModel.onAddEditResult(bundle.getInt("result"))
+        }
+
         viewModel.taskList.observe(viewLifecycleOwner) { tasks ->
             taskAdapter.submitList(tasks)
         }
@@ -89,6 +95,16 @@ class TaskFragment : Fragment(R.layout.fragment_task), TaskAdapter.OnItemClickLi
                             )
                         findNavController().navigate(action)
                     }
+                    is TaskViewModel.TaskEvent.ShowAddTaskOperationMessage -> Snackbar.make(
+                        requireView(),
+                        "Task added",
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    is TaskViewModel.TaskEvent.ShowEditTaskOperationMessage -> Snackbar.make(
+                        requireView(),
+                        "Task edited",
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
             }
         }

@@ -7,6 +7,7 @@ import com.dev.learnandroid.data.local.PreferencesManager
 import com.dev.learnandroid.data.local.SortOrder
 import com.dev.learnandroid.data.local.Task
 import com.dev.learnandroid.data.local.TaskDao
+import com.dev.learnandroid.ui.TASK_ADDED
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -66,11 +67,20 @@ class TaskViewModel @ViewModelInject constructor(
         taskEventChanel.send(TaskEvent.NavigateToAddTaskFragment)
     }
 
+    fun onAddEditResult(result: Int) = viewModelScope.launch {
+        if (result == TASK_ADDED)
+            taskEventChanel.send(TaskEvent.ShowAddTaskOperationMessage)
+        else
+            taskEventChanel.send(TaskEvent.ShowEditTaskOperationMessage)
+    }
+
 
     sealed class TaskEvent {
         object NavigateToAddTaskFragment : TaskEvent()
         data class NavigateToEditTaskFragment(val task: Task) : TaskEvent()
         data class ShouldUndoDeleteTaskMessage(val task: Task) : TaskEvent()
+        object ShowAddTaskOperationMessage : TaskEvent()
+        object ShowEditTaskOperationMessage : TaskEvent()
     }
 }
 
