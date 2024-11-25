@@ -25,4 +25,4 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
     - name: Build apk
-      run: ./grdlew assembleRelease
+      run: ./gradlew assembleRelease
